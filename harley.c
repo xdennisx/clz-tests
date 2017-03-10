@@ -18,7 +18,7 @@ unsigned clz(uint32_t x)
 
     // CLZ table
 #else
-    static uint8_t const Table[] ={
+    static uint8_t const Table[] = {
         32,31, 0,16, 0,30, 3, 0,15, 0, 0, 0,29,10, 2, 0,
         0, 0,12,14,21, 0,19, 0, 0,28, 0,25, 0, 9, 1, 0,
         17, 0, 4, 0, 0, 0,11, 0,13,22,20, 0,26, 0, 0,18,
@@ -32,7 +32,7 @@ unsigned clz(uint32_t x)
     x = x | (x >> 4);
     x = x | (x >> 8);
     x = x | (x >> 16);
- 
+
     /* x = x * 0x6EB14F9 */
     x = (x << 3) - x;   /* Multiply by 7. */
     x = (x << 8) - x;   /* Multiply by 255. */
