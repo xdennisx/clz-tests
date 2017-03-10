@@ -1,5 +1,5 @@
 CC ?= gcc
-CFLAGS_common ?= -Wall -std=gnu99 -g -DDEBUG 
+CFLAGS_common ?= -Wall -std=gnu11 -g -DDEBUG 
 CFLAGS_iteration = -O0
 CFLAGS_binary  = -O0
 CFLAGS_byte  = -O0
@@ -15,7 +15,7 @@ endif
 ifeq ($(strip $(MP)),1)
 CFLAGS_common += -fopenmp -DMP
 endif
-EXEC = iteration binary byte recursive harley 
+EXEC = iteration binary byte recursive harley
 
 GIT_HOOKS := .git/hooks/pre-commit
 .PHONY: all
@@ -29,23 +29,23 @@ SRCS_common = main.c
 
 iteration: $(SRCS_common) iteration.c clz.h
 	$(CC) $(CFLAGS_common) $(CFLAGS_iteration) \
-		-o $@ -Diteration $(SRCS_common) 
+		-o $@ -Diteration $(SRCS_common)
 
 binary: $(SRCS_common) binary.c clz.h
 	$(CC) $(CFLAGS_common) $(CFLAGS_binary) \
-		-o $@ -Dbinary $(SRCS_common) 
+		-o $@ -Dbinary $(SRCS_common)
 
 byte: $(SRCS_common) byte.c clz.h
 	$(CC) $(CFLAGS_common) $(CFLAGS_byte) \
-		-o $@ -Dbyte $(SRCS_common) 
+		-o $@ -Dbyte $(SRCS_common)
 
 harley: $(SRCS_common) harley.c clz.h
 	$(CC) $(CFLAGS_common) $(CFLAGS_harley) \
-		-o $@ -Dharley $(SRCS_common) 
+		-o $@ -Dharley $(SRCS_common)
 
 recursive: $(SRCS_common) recursive.c clz2.h
 	$(CC)  $(CFLAGS_common) $(CFLAGS_recursive) \
-		-o $@ -Drecursive $(SRCS_common) 
+		-o $@ -Drecursive $(SRCS_common)
 
 
 run: $(EXEC)

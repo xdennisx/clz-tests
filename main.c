@@ -16,6 +16,27 @@
 #include "clz.h"
 #endif
 
+#define printf_dec_format(x) _Generic((x), \
+    char: "%c ", \
+    signed char: "%hhd ", \
+    unsigned char: "%hhu ", \
+    signed short: "%hd ", \
+    unsigned short: "%hu ", \
+    signed int: "%d ", \
+    unsigned int: "%u ", \
+    long int: "%ld ", \
+    unsigned long int: "%lu ", \
+    long long int: "%lld ", \
+    unsigned long long int: "%llu ", \
+    float: "%f ", \
+    double: "%f ", \
+    long double: "%Lf ", \
+    char *: "%s ", \
+    void *: "%p ")
+
+#define print(x) printf(printf_dec_format(x), x)
+#define printnl(x) printf(printf_dec_format(x), x), printf("\n");
+
 static inline __attribute__((always_inline))
 void get_cycles(unsigned *high, unsigned *low)
 {
@@ -71,14 +92,20 @@ int main(int argc, char *argv[])
                     timec = 0;
                     get_cycles(&timec_high1, &timec_low1);
                     for (uint32_t i = 0; i < 32; i++) {
-                        printf("%u:%d \n",1<<i,clz(1<<i));
+                        print(1<<i);
+                        print(":");
+                        printnl(clz(i<<i));
+                        //printf("%u:%d \n",1<<i,clz(1<<i));
                         for (uint32_t j = (1 << i); j < (1 << ((i + 1) == 32 ? 31 : (i + 1))); j++) {
                             assert( __builtin_clz (j) == clz(j));
                         }
                     }
                     get_cycles_end(&timec_high2, &timec_low2);
                     timec = diff_in_cycles(timec_high1, timec_low1, timec_high2, timec_low2);
-                    printf("executiom time : %lu cycles\n", timec);
+                    print("executiom time :");
+                    print(timec);
+                    print("cycles");
+                    //printf("executiom time : %lu cycles\n", timec);
                 }
 
 #else
@@ -114,12 +141,18 @@ int main(int argc, char *argv[])
         }
         time_all += (timecall / 100);
         fprintf(output, "%d %lu cycles\n", i, timecall / 100);
-        printf("%d %lu cycles\n", i, timecall / 100);
+        //printf("%d %lu cycles\n", i, timecall / 100);
+        print(i);
+        print(timecall / 100);
+        printnl("cycles");
     }
 
     fclose(output);
 
-    printf("took %lf million cycles\n", time_all / 1000000.0);
+    print("took");
+    print(time_all / 1000000.0);
+    printnl("million cycles");
+    //printf("took %lf million cycles\n", time_all / 1000000.0);
 #endif
 
     return 0;
