@@ -1,21 +1,16 @@
 CC ?= gcc
-CFLAGS_common ?= -Wall -std=gnu11 -g -DDEBUG 
-CFLAGS_iteration = -O0
-CFLAGS_binary  = -O0
-CFLAGS_byte  = -O0
-CFLAGS_harlay  = -O0
-CFLAGS_recursive  = -O0
+CFLAGS_common ?= -Wall -std=gnu11 -g -DDEBUG -O0
 CFLAGS_overload  = -Wall -std=c++11 -g -DDEBUG -O0
 ifeq ($(strip $(PROFILE)),1)
 CFLAGS_common += -Dcorrect
 endif
 ifeq ($(strip $(CTZ)),1)
-CFLAGS_harley += -DCTZ
+CFLAGS_common += -DCTZ
 endif
 ifeq ($(strip $(MP)),1)
 CFLAGS_common += -fopenmp -DMP
 endif
-EXEC = iteration binary byte recursive harley
+EXEC = clz_iteration clz_binary clz_byte clz_recursive clz_harley
 
 GIT_HOOKS := .git/hooks/pre-commit
 .PHONY: all
@@ -27,35 +22,20 @@ $(GIT_HOOKS):
 
 SRCS_common = main.c
 
-iteration: $(SRCS_common) iteration.c clz.h
-	$(CC) $(CFLAGS_common) $(CFLAGS_iteration) \
-		-o $@ -Diteration $(SRCS_common)
+clz_%: %_method.o %.c
+	$(CC) $(CFLAGS_common) $? -o $@
 
-binary: $(SRCS_common) binary.c clz.h
-	$(CC) $(CFLAGS_common) $(CFLAGS_binary) \
-		-o $@ -Dbinary $(SRCS_common)
-
-byte: $(SRCS_common) byte.c clz.h
-	$(CC) $(CFLAGS_common) $(CFLAGS_byte) \
-		-o $@ -Dbyte $(SRCS_common)
-
-harley: $(SRCS_common) harley.c clz.h
-	$(CC) $(CFLAGS_common) $(CFLAGS_harley) \
-		-o $@ -Dharley $(SRCS_common)
-
-recursive: $(SRCS_common) recursive.c clz2.h
-	$(CC)  $(CFLAGS_common) $(CFLAGS_recursive) \
-		-o $@ -Drecursive $(SRCS_common)
-
+%_method.o: $(SRCS_common)
+	$(CC) -c $(CFLAGS_common) $< -D$(shell echo $(subst _method.o,,$@)) -o $@
 
 run: $(EXEC)
-	taskset -c 1 ./iteration 67100000 67116384
-	taskset -c 1 ./binary 67100000 67116384
-	taskset -c 1 ./byte 67100000 67116384
-	taskset -c 1 ./recursive 67100000 67116384
-	taskset -c 1 ./harley 67100000 67116384
+	taskset -c 1 ./clz_iteration 67100000 67116384
+	taskset -c 1 ./clz_binary 67100000 67116384
+	taskset -c 1 ./clz_byte 67100000 67116384
+	taskset -c 1 ./clz_recursive 67100000 67116384
+	taskset -c 1 ./clz_harley 67100000 67116384
 
-plot: iteration.txt iteration.txt binary.txt byte.txt harley.txt
+plot: iteration.txt recursive.txt binary.txt byte.txt harley.txt
 	gnuplot scripts/runtime.gp
 
 .PHONY: clean

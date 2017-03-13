@@ -6,9 +6,9 @@
 *.swp
 *.bak
 *.txt
-binary
-byte
-harley
-iteration
-recursive
+clz_binary
+clz_byte
+clz_harley
+clz_iteration
+clz_recursive
 runtime.png
